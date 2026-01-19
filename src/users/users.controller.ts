@@ -71,7 +71,6 @@ export class UsersController {
     body: {
       admin_id: string;
       email: string;
-      password: string;
       role: string;
       full_name: string;
       bodega_id: string;
@@ -84,7 +83,6 @@ export class UsersController {
     const { data, error } =
       await this.supabaseClient.supabase.auth.admin.updateUserById(id, {
         email: body.email,
-        password: body.password,
         user_metadata: {
           full_name: body.full_name,
           role: body.role,
@@ -93,7 +91,16 @@ export class UsersController {
       });
     if (error) return { error };
 
-    const { data: _, error: ErrorUpdateBodega } =
+    const { data: oldBodega, error: errorOldBodega } =
+      await this.supabaseClient.supabase
+        .from('Bodegas')
+        .update({
+          user_id: null,
+        })
+        .eq('user_id', id);
+    if (errorOldBodega) return { error: errorOldBodega };
+
+    const { data: newBodega, error: ErrorUpdateBodega } =
       await this.supabaseClient.supabase
         .from('Bodegas')
         .update({
