@@ -7,7 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import SupabaseClient from 'src/supabase-client';
+import SupabaseClient from '../supabase-client';
 import { ConfigService } from '@nestjs/config';
 @Controller('users')
 export class UsersController {
