@@ -74,6 +74,7 @@ export class UsersController {
       password: string;
       role: string;
       full_name: string;
+      bodega_id: string;
     },
     @Param('id') id: string,
   ) {
@@ -91,6 +92,17 @@ export class UsersController {
         email_confirm: true,
       });
     if (error) return { error };
+
+    const { data: _, error: ErrorUpdateBodega } =
+      await this.supabaseClient.supabase
+        .from('Bodegas')
+        .update({
+          user_id: id,
+        })
+        .eq('id', body.bodega_id);
+
+    if (ErrorUpdateBodega) return { error: ErrorUpdateBodega };
+
     return data;
   }
 
