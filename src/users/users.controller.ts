@@ -77,10 +77,11 @@ export class UsersController {
     },
     @Param('id') id: string,
   ) {
+    console.log(body);
     if (body.admin_id !== this.configService.get<string>('ADMIN_ID')) {
       return { error: 'Unauthorized' };
     }
-    const { data, error } =
+    const { data: user, error } =
       await this.supabaseClient.supabase.auth.admin.updateUserById(id, {
         email: body.email,
         user_metadata: {
@@ -95,22 +96,30 @@ export class UsersController {
       await this.supabaseClient.supabase
         .from('Bodegas')
         .update({
-          user_id: null,
+          usuario: null,
         })
-        .eq('user_id', id);
-    if (errorOldBodega) return { error: errorOldBodega };
+        .eq('usuario', id);
+    if (errorOldBodega) {
+      console.log('errorOldBodega');
+      console.log(errorOldBodega);
+      return { error: errorOldBodega };
+    }
 
     const { data: newBodega, error: ErrorUpdateBodega } =
       await this.supabaseClient.supabase
         .from('Bodegas')
         .update({
-          user_id: id,
+          usuario: id,
         })
         .eq('id', body.bodega_id);
 
-    if (ErrorUpdateBodega) return { error: ErrorUpdateBodega };
+    if (ErrorUpdateBodega) {
+      console.log('ErrorUpdateBodega');
+      console.log(ErrorUpdateBodega);
+      return { error: ErrorUpdateBodega };
+    }
 
-    return data;
+    return user;
   }
 
   @Delete(':id')
