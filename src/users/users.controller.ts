@@ -92,31 +92,33 @@ export class UsersController {
       });
     if (error) return { error };
 
-    const { data: oldBodega, error: errorOldBodega } =
-      await this.supabaseClient.supabase
-        .from('Bodegas')
-        .update({
-          usuario: null,
-        })
-        .eq('usuario', id);
-    if (errorOldBodega) {
-      console.log('errorOldBodega');
-      console.log(errorOldBodega);
-      return { error: errorOldBodega };
-    }
+    if (body.bodega_id !== '') {
+      const { data: oldBodega, error: errorOldBodega } =
+        await this.supabaseClient.supabase
+          .from('Bodegas')
+          .update({
+            usuario: null,
+          })
+          .eq('usuario', id);
+      if (errorOldBodega) {
+        console.log('errorOldBodega');
+        console.log(errorOldBodega);
+        return { error: errorOldBodega };
+      }
 
-    const { data: newBodega, error: ErrorUpdateBodega } =
-      await this.supabaseClient.supabase
-        .from('Bodegas')
-        .update({
-          usuario: id,
-        })
-        .eq('id', body.bodega_id);
+      const { data: newBodega, error: ErrorUpdateBodega } =
+        await this.supabaseClient.supabase
+          .from('Bodegas')
+          .update({
+            usuario: id,
+          })
+          .eq('id', body.bodega_id);
 
-    if (ErrorUpdateBodega) {
-      console.log('ErrorUpdateBodega');
-      console.log(ErrorUpdateBodega);
-      return { error: ErrorUpdateBodega };
+      if (ErrorUpdateBodega) {
+        console.log('ErrorUpdateBodega');
+        console.log(ErrorUpdateBodega);
+        return { error: ErrorUpdateBodega };
+      }
     }
 
     return user;
