@@ -44,6 +44,7 @@ export class UsersController {
       password: string;
       role: string;
       full_name: string;
+      bodega_id: string;
     },
   ) {
     if (body.admin_id !== this.configService.get<string>('ADMIN_ID')) {
@@ -58,6 +59,7 @@ export class UsersController {
       user_metadata: {
         full_name: body.full_name,
         role: body.role,
+        bodega_id: body.bodega_id,
       },
       email_confirm: true,
     });
@@ -81,17 +83,6 @@ export class UsersController {
     if (body.admin_id !== this.configService.get<string>('ADMIN_ID')) {
       return { error: 'Unauthorized' };
     }
-    const { data: user, error } =
-      await this.supabaseClient.supabase.auth.admin.updateUserById(id, {
-        email: body.email,
-        user_metadata: {
-          full_name: body.full_name,
-          role: body.role,
-        },
-        email_confirm: true,
-      });
-    if (error) return { error };
-
     if (body.bodega_id !== '') {
       const { data: oldBodega, error: errorOldBodega } =
         await this.supabaseClient.supabase
@@ -120,6 +111,18 @@ export class UsersController {
         return { error: ErrorUpdateBodega };
       }
     }
+
+    const { data: user, error } =
+      await this.supabaseClient.supabase.auth.admin.updateUserById(id, {
+        email: body.email,
+        user_metadata: {
+          full_name: body.full_name,
+          role: body.role,
+          bodega_id: body.bodega_id
+        },
+        email_confirm: true,
+      });
+    if (error) return { error };
 
     return user;
   }
